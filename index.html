@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Không gian văn hóa Hồ Chí Minh — Thư viện ảnh</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Merriweather:wght@700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Merriweather:wght@700;900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -34,49 +38,68 @@
       background-color: #FDFBF7;
       color: #292524;
     }
+
     .header-gradient {
       background: linear-gradient(135deg, #8B1A1A 0%, #6B1111 100%);
     }
+
     .shimmer {
       background: linear-gradient(90deg, #f3efe6 25%, #ebe4d5 50%, #f3efe6 75%);
       background-size: 200% 100%;
       animation: shimmer 1.4s infinite linear;
     }
+
     @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
     }
+
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
+
     .no-scrollbar {
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
   </style>
 </head>
+
 <body class="min-h-screen flex flex-col font-sans antialiased selection:bg-amber-200 selection:text-crimson-900">
 
   <!-- Header -->
   <header class="header-gradient text-white border-b-4 border-amber-500 shadow-md">
     <div class="max-w-6xl mx-auto px-4 py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div class="flex items-start sm:items-center gap-3.5">
-        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-amber-500/15 border border-amber-400/50 flex items-center justify-center shrink-0 shadow-inner">
+        <div
+          class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-amber-500/15 border border-amber-400/50 flex items-center justify-center shrink-0 shadow-inner">
           <!-- Biểu tượng Sao vàng & Đài sen cách điệu -->
           <svg class="w-8 h-8 text-amber-400" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <path d="M32 6L37.4 22.6H54.8L40.7 32.8L46.1 49.4L32 39.2L17.9 49.4L23.3 32.8L9.2 22.6H26.6L32 6Z" fill="currentColor" />
-            <path d="M16 54C21 51.5 26.5 50.5 32 50.5C37.5 50.5 43 51.5 48 54" stroke="#FDE68A" stroke-width="2.5" stroke-linecap="round" />
-            <path d="M22 58C25.5 56.5 28.8 56 32 56C35.2 56 38.5 56.5 42 58" stroke="#FDE68A" stroke-width="2" stroke-linecap="round" />
+            <path d="M32 6L37.4 22.6H54.8L40.7 32.8L46.1 49.4L32 39.2L17.9 49.4L23.3 32.8L9.2 22.6H26.6L32 6Z"
+              fill="currentColor" />
+            <path d="M16 54C21 51.5 26.5 50.5 32 50.5C37.5 50.5 43 51.5 48 54" stroke="#FDE68A" stroke-width="2.5"
+              stroke-linecap="round" />
+            <path d="M22 58C25.5 56.5 28.8 56 32 56C35.2 56 38.5 56.5 42 58" stroke="#FDE68A" stroke-width="2"
+              stroke-linecap="round" />
           </svg>
         </div>
         <div>
-          <p id="header-org" class="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.14em] text-amber-300"></p>
-          <h1 id="header-title" class="font-serif text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white leading-snug mt-0.5"></h1>
+          <p id="header-org" class="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.14em] text-amber-300">
+          </p>
+          <h1 id="header-title"
+            class="font-serif text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white leading-snug mt-0.5">
+          </h1>
           <p id="header-subtitle" class="text-xs sm:text-sm text-amber-100/90 mt-0.5"></p>
         </div>
       </div>
 
-      <button id="btn-home-header" type="button" class="hidden self-start sm:self-center inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-amber-300/30 text-sm font-medium text-amber-100 transition">
+      <button id="btn-home-header" type="button"
+        class="hidden self-start sm:self-center inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/10 hover:bg-white/20 border border-amber-300/30 text-sm font-medium text-amber-100 transition">
         <i class="fa-solid fa-grid-2"></i>
         <span>Tất cả các mục</span>
       </button>
@@ -97,30 +120,39 @@
 
   <!-- Footer -->
   <footer class="border-t border-amber-200/70 bg-white/70 mt-auto">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-stone-500">
+    <div
+      class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-stone-500">
       <p id="footer-org" class="font-medium text-stone-600"></p>
       <p>Ảnh được đồng bộ tự động từ thư mục lưu trữ Google Drive</p>
     </div>
   </footer>
 
   <!-- Fullscreen Lightbox -->
-  <div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/95 text-white flex flex-col select-none" role="dialog" aria-modal="true" aria-label="Xem ảnh phóng to">
+  <div id="lightbox" class="fixed inset-0 z-50 hidden bg-black/95 text-white flex flex-col select-none" role="dialog"
+    aria-modal="true" aria-label="Xem ảnh phóng to">
     <!-- Top bar -->
     <div class="flex items-center justify-between px-4 py-3 bg-gradient-to-b from-black/70 to-transparent z-10">
       <div class="flex items-center gap-3">
-        <span id="lb-counter" class="px-2.5 py-1 rounded-full bg-white/15 text-xs sm:text-sm font-semibold tracking-wide"></span>
+        <span id="lb-counter"
+          class="px-2.5 py-1 rounded-full bg-white/15 text-xs sm:text-sm font-semibold tracking-wide"></span>
         <span id="lb-album-label" class="hidden sm:inline text-xs text-stone-300 truncate max-w-md"></span>
       </div>
       <div class="flex items-center gap-2">
-        <a id="lb-download" href="#" target="_blank" rel="noopener noreferrer" download class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs sm:text-sm font-medium transition" title="Tải ảnh về máy">
+        <a id="lb-download" href="#" target="_blank" rel="noopener noreferrer" download
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs sm:text-sm font-medium transition"
+          title="Tải ảnh về máy">
           <i class="fa-solid fa-download"></i>
           <span class="hidden sm:inline">Tải về</span>
         </a>
-        <a id="lb-open-original" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs sm:text-sm font-medium transition" title="Mở ảnh gốc trên Google Drive">
+        <a id="lb-open-original" href="#" target="_blank" rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs sm:text-sm font-medium transition"
+          title="Mở ảnh gốc trên Google Drive">
           <i class="fa-solid fa-arrow-up-right-from-square"></i>
           <span class="hidden sm:inline">Ảnh gốc</span>
         </a>
-        <button id="lb-close" type="button" data-lb-action="close" class="w-9 h-9 rounded-lg bg-white/15 hover:bg-red-600/80 flex items-center justify-center text-lg transition" title="Đóng (Esc)" aria-label="Đóng">
+        <button id="lb-close" type="button" data-lb-action="close"
+          class="w-9 h-9 rounded-lg bg-white/15 hover:bg-red-600/80 flex items-center justify-center text-lg transition"
+          title="Đóng (Esc)" aria-label="Đóng">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -128,7 +160,9 @@
 
     <!-- Image Stage -->
     <div id="lb-stage" class="relative flex-1 flex items-center justify-center px-2 sm:px-14 pb-4 overflow-hidden">
-      <button type="button" data-lb-action="prev" class="hidden sm:flex absolute left-3 z-10 w-11 h-11 rounded-full bg-white/15 hover:bg-white/30 items-center justify-center text-lg transition" title="Ảnh trước (Mũi tên trái)" aria-label="Ảnh trước">
+      <button type="button" data-lb-action="prev"
+        class="hidden sm:flex absolute left-3 z-10 w-11 h-11 rounded-full bg-white/15 hover:bg-white/30 items-center justify-center text-lg transition"
+        title="Ảnh trước (Mũi tên trái)" aria-label="Ảnh trước">
         <i class="fa-solid fa-chevron-left"></i>
       </button>
 
@@ -136,9 +170,12 @@
         <div class="w-10 h-10 border-4 border-amber-400/30 border-t-amber-400 rounded-full animate-spin"></div>
       </div>
 
-      <img id="lb-image" src="" alt="" class="max-h-full max-w-full object-contain rounded shadow-2xl transition-opacity duration-200" />
+      <img id="lb-image" src="" alt=""
+        class="max-h-full max-w-full object-contain rounded shadow-2xl transition-opacity duration-200" />
 
-      <button type="button" data-lb-action="next" class="hidden sm:flex absolute right-3 z-10 w-11 h-11 rounded-full bg-white/15 hover:bg-white/30 items-center justify-center text-lg transition" title="Ảnh tiếp theo (Mũi tên phải)" aria-label="Ảnh tiếp theo">
+      <button type="button" data-lb-action="next"
+        class="hidden sm:flex absolute right-3 z-10 w-11 h-11 rounded-full bg-white/15 hover:bg-white/30 items-center justify-center text-lg transition"
+        title="Ảnh tiếp theo (Mũi tên phải)" aria-label="Ảnh tiếp theo">
         <i class="fa-solid fa-chevron-right"></i>
       </button>
     </div>
@@ -147,10 +184,12 @@
     <div class="px-4 pb-4 pt-2 bg-gradient-to-t from-black/80 to-transparent flex flex-col items-center gap-2">
       <p id="lb-caption" class="text-center text-sm text-amber-100 max-w-2xl empty:hidden"></p>
       <div class="flex sm:hidden items-center gap-4">
-        <button type="button" data-lb-action="prev" class="px-4 py-2 rounded-full bg-white/15 active:bg-white/30 text-sm font-medium">
+        <button type="button" data-lb-action="prev"
+          class="px-4 py-2 rounded-full bg-white/15 active:bg-white/30 text-sm font-medium">
           <i class="fa-solid fa-chevron-left mr-1"></i> Trước
         </button>
-        <button type="button" data-lb-action="next" class="px-4 py-2 rounded-full bg-white/15 active:bg-white/30 text-sm font-medium">
+        <button type="button" data-lb-action="next"
+          class="px-4 py-2 rounded-full bg-white/15 active:bg-white/30 text-sm font-medium">
           Sau <i class="fa-solid fa-chevron-right ml-1"></i>
         </button>
       </div>
@@ -166,7 +205,7 @@
     // =========================================================================
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzoUcF4GvTu-2cFQIpRd2CtCnvhb63vd_mvUdu4AuSqPxsRfI64N15G5ZIWHmn_0L7FhA/exec";
     const SITE_CONFIG = {
-      orgName: "CHI BỘ TRƯỜNG THCS TÂN BÌNH",
+      orgName: "CHI BỘ TRƯỜNG THCS VĨNH TÂN",
       siteTitle: "KHÔNG GIAN VĂN HÓA HỒ CHÍ MINH",
       siteSubtitle: "Thư viện ảnh tư liệu & hoạt động trực tuyến",
       showDriveLink: true,
@@ -189,8 +228,8 @@
           desc: "Góc trưng bày, tủ sách và sinh hoạt chủ điểm tại các chi đội, lớp học."
         },
         "6": {
-          title: "Mục 6: Bảng Vinh danh học sinh tiêu biểu",
-          desc: "Ghi nhận nỗ lực, lan tỏa giá trị — Tự hào học sinh Trường THCS Tân Bình."
+          title: "Mục 6: Gương điển hình, tiêu biểu Trường THCS Vĩnh Tân",
+          desc: "Ghi nhận nỗ lực, lan tỏa giá trị — Tự hào học sinh Trường THCS Vĩnh Tân."
         }
       }
     };
@@ -281,14 +320,14 @@
         type === "error"
           ? "bg-red-700 text-white border-red-500"
           : type === "success"
-          ? "bg-emerald-700 text-white border-emerald-500"
-          : "bg-stone-800 text-white border-stone-600";
+            ? "bg-emerald-700 text-white border-emerald-500"
+            : "bg-stone-800 text-white border-stone-600";
       const iconClass =
         type === "error"
           ? "fa-circle-exclamation"
           : type === "success"
-          ? "fa-circle-check"
-          : "fa-circle-info";
+            ? "fa-circle-check"
+            : "fa-circle-info";
 
       toast.className =
         "pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl border shadow-lg text-sm font-medium transition-all duration-300 translate-y-2 opacity-0 " +
@@ -375,8 +414,8 @@
         state.albumsIndex.length > 0
           ? state.albumsIndex
           : Object.keys(SITE_CONFIG.albums).map(function (k) {
-              return { key: k, folderName: "" };
-            });
+            return { key: k, folderName: "" };
+          });
 
       const isHome = !state.currentMuc;
       homeBtn.classList.toggle("hidden", isHome);
@@ -477,7 +516,7 @@
         '<i class="fa-solid fa-rotate-right"></i> Thử lại</button>' +
         (state.currentMuc
           ? '<button type="button" data-nav-muc="" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-sm font-semibold transition">' +
-            '<i class="fa-solid fa-house"></i> Về trang chủ</button>'
+          '<i class="fa-solid fa-house"></i> Về trang chủ</button>'
           : "") +
         "</div></div>";
     }
@@ -498,12 +537,12 @@
         const meta = getAlbumMeta(album.key, album.folderName);
         const coverHtml = album.coverThumb
           ? '<img src="' +
-            escapeHtml(album.coverThumb) +
-            '" data-fallback="' +
-            escapeHtml(album.fallbackCoverThumb || "") +
-            '" onerror="handleImageFallback(this)" loading="lazy" alt="' +
-            escapeHtml(meta.title) +
-            '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />'
+          escapeHtml(album.coverThumb) +
+          '" data-fallback="' +
+          escapeHtml(album.fallbackCoverThumb || "") +
+          '" onerror="handleImageFallback(this)" loading="lazy" alt="' +
+          escapeHtml(meta.title) +
+          '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />'
           : '<div class="w-full h-full flex items-center justify-center bg-amber-50 text-amber-400 text-3xl"><i class="fa-regular fa-images"></i></div>';
 
         cardsHtml +=
@@ -527,8 +566,8 @@
           "</h2>" +
           (meta.desc
             ? '<p class="text-sm text-stone-600 mt-2 line-clamp-2 flex-1">' +
-              escapeHtml(meta.desc) +
-              "</p>"
+            escapeHtml(meta.desc) +
+            "</p>"
             : '<div class="flex-1"></div>') +
           '<div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-sm font-semibold text-crimson-700">' +
           "<span>Xem bộ ảnh</span>" +
@@ -561,9 +600,9 @@
       const driveButtonHtml =
         SITE_CONFIG.showDriveLink && album.folderUrl
           ? '<a href="' +
-            escapeHtml(album.folderUrl) +
-            '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs sm:text-sm font-semibold transition">' +
-            '<i class="fa-brands fa-google-drive text-emerald-700"></i><span>Mở Google Drive</span></a>'
+          escapeHtml(album.folderUrl) +
+          '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs sm:text-sm font-semibold transition">' +
+          '<i class="fa-brands fa-google-drive text-emerald-700"></i><span>Mở Google Drive</span></a>'
           : "";
 
       let gridHtml = "";
@@ -595,8 +634,8 @@
             '<i class="fa-solid fa-magnifying-glass-plus text-xs"></i></span>' +
             (img.caption
               ? '<p class="absolute bottom-2 left-2 right-11 text-xs text-white font-medium truncate opacity-0 group-hover:opacity-100 transition-opacity">' +
-                escapeHtml(img.caption) +
-                "</p>"
+              escapeHtml(img.caption) +
+              "</p>"
               : "") +
             "</button>";
         });
@@ -922,4 +961,5 @@
     });
   </script>
 </body>
+
 </html>
