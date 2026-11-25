@@ -196,6 +196,47 @@
     </div>
   </div>
 
+  <!-- Fullscreen Document Viewer Modal -->
+  <div id="doc-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex flex-col" role="dialog"
+    aria-modal="true" aria-label="Xem tài liệu">
+    <div
+      class="flex items-center justify-between px-4 py-3 bg-crimson-900 text-white border-b border-amber-500/60 gap-3">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <i id="doc-modal-icon" class="fa-solid fa-file-lines text-amber-300 shrink-0"></i>
+        <h3 id="doc-modal-title" class="text-sm sm:text-base font-semibold truncate"></h3>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <a id="doc-modal-download" href="#" target="_blank" rel="noopener noreferrer" download
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs sm:text-sm font-medium transition"
+          title="Tải tài liệu về máy">
+          <i class="fa-solid fa-download"></i>
+          <span class="hidden sm:inline">Tải về</span>
+        </a>
+        <a id="doc-modal-open" href="#" target="_blank" rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs sm:text-sm font-medium transition"
+          title="Mở trên Google Drive">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          <span class="hidden sm:inline">Mở tab mới</span>
+        </a>
+        <button type="button" data-doc-action="close"
+          class="w-9 h-9 rounded-lg bg-white/15 hover:bg-red-600/80 flex items-center justify-center text-lg transition"
+          title="Đóng (Esc)" aria-label="Đóng">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+    <div id="doc-modal-stage" class="relative flex-1 bg-stone-900">
+      <div id="doc-modal-spinner" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div class="flex flex-col items-center gap-3 text-amber-200 text-sm">
+          <div class="w-10 h-10 border-4 border-amber-400/30 border-t-amber-400 rounded-full animate-spin"></div>
+          <span>Đang tải bản xem trước tài liệu...</span>
+        </div>
+      </div>
+      <iframe id="doc-modal-frame" src="about:blank" class="relative z-10 w-full h-full border-0 bg-white"
+        allow="autoplay"></iframe>
+    </div>
+  </div>
+
   <!-- Toast Container -->
   <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
@@ -207,7 +248,7 @@
     const SITE_CONFIG = {
       orgName: "CHI BỘ TRƯỜNG THCS VĨNH TÂN",
       siteTitle: "KHÔNG GIAN VĂN HÓA HỒ CHÍ MINH",
-      siteSubtitle: "Thư viện ảnh tư liệu & hoạt động trực tuyến",
+      siteSubtitle: "Thư viện ảnh tư liệu, hoạt động & văn bản trực tuyến",
       showDriveLink: true,
       showNavTabs: true,
       albums: {
@@ -230,11 +271,16 @@
         "6": {
           title: "Mục 6: Gương điển hình, tiêu biểu Trường THCS Vĩnh Tân",
           desc: "Ghi nhận nỗ lực, lan tỏa giá trị — Tự hào học sinh Trường THCS Vĩnh Tân."
+        },
+        "7": {
+          title: "Mục 7: Kho tài liệu học tập & tư liệu",
+          desc: "Văn bản, chuyên đề và tài liệu tham khảo về tư tưởng, đạo đức, phong cách Hồ Chí Minh.",
+          isDocumentSection: true
         }
       }
     };
 
-    const CACHE_PREFIX = "kgvh_";
+    const CACHE_PREFIX = "kgvh_v2_";
 
     const state = {
       currentMuc: "",
@@ -257,18 +303,65 @@
         .replace(/'/g, "&#39;");
     }
 
+    function removeVietnameseTones(str) {
+      return String(str || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d")
+        .replace(/Đ/g, "D")
+        .toLowerCase()
+        .trim();
+    }
+
+    function getDocStyle(kind) {
+      switch (kind) {
+        case "pdf":
+          return { icon: "fa-solid fa-file-pdf", boxClass: "bg-red-50 text-red-700 border-red-200", badgeClass: "bg-red-100 text-red-800" };
+        case "doc":
+          return { icon: "fa-solid fa-file-word", boxClass: "bg-blue-50 text-blue-700 border-blue-200", badgeClass: "bg-blue-100 text-blue-800" };
+        case "sheet":
+          return { icon: "fa-solid fa-file-excel", boxClass: "bg-emerald-50 text-emerald-700 border-emerald-200", badgeClass: "bg-emerald-100 text-emerald-800" };
+        case "slide":
+          return { icon: "fa-solid fa-file-powerpoint", boxClass: "bg-orange-50 text-orange-700 border-orange-200", badgeClass: "bg-orange-100 text-orange-800" };
+        case "video":
+          return { icon: "fa-solid fa-file-video", boxClass: "bg-purple-50 text-purple-700 border-purple-200", badgeClass: "bg-purple-100 text-purple-800" };
+        case "audio":
+          return { icon: "fa-solid fa-file-audio", boxClass: "bg-amber-50 text-amber-700 border-amber-200", badgeClass: "bg-amber-100 text-amber-800" };
+        default:
+          return { icon: "fa-solid fa-file-lines", boxClass: "bg-stone-100 text-stone-700 border-stone-200", badgeClass: "bg-stone-200 text-stone-800" };
+      }
+    }
+
+    function formatCountLabel(album, meta) {
+      const hasBreakdown = typeof album.imageCount === "number" || typeof album.documentCount === "number";
+      if (!hasBreakdown) {
+        return meta.isDocumentSection ? album.count + " tài liệu" : album.count + " ảnh";
+      }
+      const imgCount = album.imageCount || 0;
+      const docCount = album.documentCount || 0;
+      if (imgCount > 0 && docCount > 0) {
+        return imgCount + " ảnh · " + docCount + " tài liệu";
+      }
+      if (docCount > 0 || meta.isDocumentSection) {
+        return docCount + " tài liệu";
+      }
+      return imgCount + " ảnh";
+    }
+
     function getAlbumMeta(key, folderName) {
       const k = String(key || "");
       const configured = SITE_CONFIG.albums[k];
       if (configured) {
         return {
           title: configured.title,
-          desc: configured.desc || ""
+          desc: configured.desc || "",
+          isDocumentSection: Boolean(configured.isDocumentSection)
         };
       }
       return {
         title: folderName ? "Mục " + k + ": " + folderName : "Mục " + k,
-        desc: ""
+        desc: "",
+        isDocumentSection: false
       };
     }
 
@@ -465,7 +558,7 @@
         '<div class="mt-6 text-left bg-parchment border border-amber-200/80 rounded-xl p-4 text-xs sm:text-sm text-stone-700 space-y-2">' +
         '<p class="font-semibold text-crimson-900"><i class="fa-solid fa-list-check mr-1.5 text-amber-600"></i>Các đường dẫn QR sẽ dùng sau khi xuất bản:</p>' +
         '<ul class="list-disc list-inside space-y-1 font-mono text-xs text-stone-600">' +
-        "<li>?muc=1</li><li>?muc=2</li><li>?muc=3</li><li>?muc=5</li><li>?muc=6</li>" +
+        "<li>?muc=1</li><li>?muc=2</li><li>?muc=3</li><li>?muc=5</li><li>?muc=6</li><li>?muc=7</li>" +
         "</ul></div></section>";
     }
 
@@ -535,15 +628,32 @@
       let cardsHtml = "";
       albums.forEach(function (album) {
         const meta = getAlbumMeta(album.key, album.folderName);
-        const coverHtml = album.coverThumb
-          ? '<img src="' +
-          escapeHtml(album.coverThumb) +
-          '" data-fallback="' +
-          escapeHtml(album.fallbackCoverThumb || "") +
-          '" onerror="handleImageFallback(this)" loading="lazy" alt="' +
-          escapeHtml(meta.title) +
-          '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />'
-          : '<div class="w-full h-full flex items-center justify-center bg-amber-50 text-amber-400 text-3xl"><i class="fa-regular fa-images"></i></div>';
+        const isDocCard = meta.isDocumentSection || (album.documentCount > 0 && !album.coverThumb);
+        const countText = formatCountLabel(album, meta);
+        const countIcon = isDocCard ? "fa-regular fa-file-lines" : "fa-regular fa-image";
+        const ctaText = isDocCard ? "Xem tài liệu" : "Xem bộ ảnh";
+
+        let coverHtml = "";
+        if (album.coverThumb) {
+          coverHtml =
+            '<img src="' +
+            escapeHtml(album.coverThumb) +
+            '" data-fallback="' +
+            escapeHtml(album.fallbackCoverThumb || "") +
+            '" onerror="handleImageFallback(this)" loading="lazy" alt="' +
+            escapeHtml(meta.title) +
+            '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />';
+        } else if (isDocCard) {
+          coverHtml =
+            '<div class="w-full h-full flex flex-col items-center justify-center header-gradient text-amber-300 px-4 text-center">' +
+            '<div class="w-14 h-14 rounded-2xl bg-amber-400/15 border border-amber-300/40 flex items-center justify-center text-3xl mb-2">' +
+            '<i class="fa-solid fa-book-open"></i></div>' +
+            '<span class="text-xs font-semibold uppercase tracking-widest text-amber-200/90">Kho tài liệu &amp; Văn bản</span>' +
+            "</div>";
+        } else {
+          coverHtml =
+            '<div class="w-full h-full flex items-center justify-center bg-amber-50 text-amber-400 text-3xl"><i class="fa-regular fa-images"></i></div>';
+        }
 
         cardsHtml +=
           '<article data-open-muc="' +
@@ -556,9 +666,9 @@
           escapeHtml(album.key) +
           "</span>" +
           '<span class="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-black/65 backdrop-blur text-white text-xs font-medium">' +
-          '<i class="fa-regular fa-image mr-1"></i>' +
-          escapeHtml(album.count) +
-          " ảnh</span>" +
+          '<i class="' + countIcon + ' mr-1"></i>' +
+          escapeHtml(countText) +
+          "</span>" +
           "</div>" +
           '<div class="p-5 flex-1 flex flex-col">' +
           '<h2 class="font-serif text-lg font-bold text-crimson-900 group-hover:text-crimson-700 transition leading-snug">' +
@@ -570,7 +680,7 @@
             "</p>"
             : '<div class="flex-1"></div>') +
           '<div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-sm font-semibold text-crimson-700">' +
-          "<span>Xem bộ ảnh</span>" +
+          "<span>" + ctaText + "</span>" +
           '<i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>' +
           "</div></div></article>";
       });
@@ -580,7 +690,7 @@
         "<div>" +
         '<span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-crimson-700 bg-amber-100 px-3 py-1 rounded-full">' +
         '<i class="fa-solid fa-star text-amber-600"></i> Danh mục trưng bày</span>' +
-        '<h2 class="font-serif text-xl sm:text-2xl font-bold text-stone-900 mt-2">Chọn chuyên mục hình ảnh</h2>' +
+        '<h2 class="font-serif text-xl sm:text-2xl font-bold text-stone-900 mt-2">Chọn chuyên mục hình ảnh &amp; tài liệu</h2>' +
         "</div>" +
         '<button type="button" data-action="refresh-list" class="self-start sm:self-auto inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white hover:bg-amber-50 border border-amber-200 text-xs sm:text-sm font-semibold text-stone-700 shadow-sm transition">' +
         '<i class="fa-solid fa-arrows-rotate"></i><span>Làm mới danh sách</span>' +
@@ -597,6 +707,13 @@
       renderNavTabs();
 
       const main = document.getElementById("main-content");
+      const images = Array.isArray(album.images) ? album.images : [];
+      const documents = Array.isArray(album.documents) ? album.documents : [];
+      const countText = formatCountLabel(album, meta);
+      const countIcon = (meta.isDocumentSection || (documents.length > 0 && images.length === 0))
+        ? "fa-regular fa-file-lines"
+        : "fa-regular fa-images";
+
       const driveButtonHtml =
         SITE_CONFIG.showDriveLink && album.folderUrl
           ? '<a href="' +
@@ -605,16 +722,88 @@
           '<i class="fa-brands fa-google-drive text-emerald-700"></i><span>Mở Google Drive</span></a>'
           : "";
 
+      let docsHtml = "";
+      if (documents.length > 0) {
+        const searchBarHtml =
+          documents.length >= 4
+            ? '<div class="relative w-full sm:w-72">' +
+            '<i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 text-xs"></i>' +
+            '<input id="doc-search-input" type="search" placeholder="Tìm nhanh tài liệu..." class="w-full pl-9 pr-3.5 py-2 rounded-xl bg-white border border-amber-200 text-sm text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500" />' +
+            "</div>"
+            : "";
+
+        let docRowsHtml = "";
+        documents.forEach(function (doc, idx) {
+          const style = getDocStyle(doc.kind);
+          const searchHaystack = removeVietnameseTones((doc.title || doc.name) + " " + (doc.typeLabel || ""));
+          docRowsHtml +=
+            '<article data-doc-card data-search="' +
+            escapeHtml(searchHaystack) +
+            '" class="bg-white rounded-2xl border border-amber-200/80 shadow-sm hover:shadow-md transition p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">' +
+            '<div class="flex items-start gap-3.5 min-w-0">' +
+            '<div class="w-12 h-12 rounded-xl border flex items-center justify-center text-xl shrink-0 ' +
+            style.boxClass +
+            '">' +
+            '<i class="' + style.icon + '"></i></div>' +
+            '<div class="min-w-0 flex-1">' +
+            '<h3 class="font-semibold text-base text-stone-900 leading-snug break-words">' +
+            escapeHtml(doc.title || doc.name) +
+            "</h3>" +
+            '<div class="flex flex-wrap items-center gap-2 mt-1.5">' +
+            '<span class="px-2 py-0.5 rounded-md text-[11px] font-bold ' +
+            style.badgeClass +
+            '">' +
+            escapeHtml(doc.typeLabel || "Tài liệu") +
+            "</span>" +
+            (doc.sizeText
+              ? '<span class="text-xs text-stone-500"><i class="fa-regular fa-hard-drive mr-1"></i>' +
+              escapeHtml(doc.sizeText) +
+              "</span>"
+              : "") +
+            "</div></div></div>" +
+            '<div class="flex flex-wrap items-center gap-2 shrink-0">' +
+            '<button type="button" data-doc-index="' +
+            idx +
+            '" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-crimson-700 hover:bg-crimson-800 text-white text-xs sm:text-sm font-semibold shadow-sm transition">' +
+            '<i class="fa-regular fa-eye"></i><span>Xem trực tiếp</span></button>' +
+            '<a href="' +
+            escapeHtml(doc.downloadUrl || doc.viewUrl) +
+            '" target="_blank" rel="noopener noreferrer" download class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-crimson-900 text-xs sm:text-sm font-semibold transition">' +
+            '<i class="fa-solid fa-download"></i><span>Tải về</span></a>' +
+            '<a href="' +
+            escapeHtml(doc.viewUrl) +
+            '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-sm transition" title="Mở trên Google Drive">' +
+            '<i class="fa-solid fa-arrow-up-right-from-square"></i></a>' +
+            "</div></article>";
+        });
+
+        docsHtml =
+          '<div id="doc-section" class="space-y-4">' +
+          '<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">' +
+          '<h3 class="font-serif text-lg font-bold text-crimson-900 flex items-center gap-2">' +
+          '<i class="fa-solid fa-folder-open text-amber-600"></i>' +
+          "<span>Danh sách tài liệu (" + documents.length + ")</span></h3>" +
+          searchBarHtml +
+          "</div>" +
+          '<div id="doc-list" class="space-y-3">' +
+          docRowsHtml +
+          "</div>" +
+          '<div id="doc-empty-search" class="hidden bg-white rounded-2xl border border-amber-200 p-8 text-center text-sm text-stone-500">' +
+          "Không tìm thấy tài liệu phù hợp với từ khóa vừa nhập.</div>" +
+          "</div>";
+      }
+
       let gridHtml = "";
-      if (!album.images || album.images.length === 0) {
-        gridHtml =
-          '<div class="bg-white rounded-2xl border border-amber-200 p-10 text-center text-stone-500">' +
-          '<i class="fa-regular fa-folder-open text-3xl text-amber-400 mb-3 block"></i>' +
-          "Thư mục này hiện chưa có ảnh nào.</div>";
-      } else {
-        gridHtml =
-          '<div id="photo-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">';
-        album.images.forEach(function (img, idx) {
+      if (images.length > 0) {
+        const photoHeading =
+          documents.length > 0
+            ? '<h3 class="font-serif text-lg font-bold text-crimson-900 flex items-center gap-2 mb-3">' +
+            '<i class="fa-regular fa-images text-amber-600"></i>' +
+            "<span>Hình ảnh kèm theo (" + images.length + ")</span></h3>"
+            : "";
+
+        gridHtml = photoHeading + '<div id="photo-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">';
+        images.forEach(function (img, idx) {
           gridHtml +=
             '<button type="button" data-photo-index="' +
             idx +
@@ -640,6 +829,15 @@
             "</button>";
         });
         gridHtml += "</div>";
+      } else if (documents.length === 0) {
+        const emptyMsg = meta.isDocumentSection
+          ? "Thư mục này hiện chưa có tài liệu nào."
+          : "Thư mục này hiện chưa có ảnh nào.";
+        gridHtml =
+          '<div class="bg-white rounded-2xl border border-amber-200 p-10 text-center text-stone-500">' +
+          '<i class="fa-regular fa-folder-open text-3xl text-amber-400 mb-3 block"></i>' +
+          emptyMsg +
+          "</div>";
       }
 
       main.innerHTML =
@@ -651,9 +849,9 @@
         escapeHtml(album.key) +
         "</span>" +
         '<span class="px-2.5 py-1 rounded-full bg-stone-100 text-stone-700 text-xs font-semibold">' +
-        '<i class="fa-regular fa-images mr-1 text-crimson-700"></i>' +
-        escapeHtml(album.count) +
-        " ảnh</span>" +
+        '<i class="' + countIcon + ' mr-1 text-crimson-700"></i>' +
+        escapeHtml(countText) +
+        "</span>" +
         "</div>" +
         '<h2 class="font-serif text-xl sm:text-2xl font-bold text-crimson-900 leading-snug">' +
         escapeHtml(meta.title) +
@@ -664,13 +862,50 @@
         "</div>" +
         '<div class="flex flex-wrap items-center gap-2.5 shrink-0">' +
         '<button type="button" data-action="refresh-album" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-crimson-900 text-xs sm:text-sm font-semibold transition">' +
-        '<i class="fa-solid fa-arrows-rotate"></i><span>Làm mới ảnh</span>' +
+        '<i class="fa-solid fa-arrows-rotate"></i><span>Làm mới</span>' +
         "</button>" +
         driveButtonHtml +
         "</div>" +
         "</div>" +
+        docsHtml +
         gridHtml +
         "</section>";
+    }
+
+    // =========================================================================
+    // TRÌNH XEM TÀI LIỆU TRỰC TIẾP (MODAL PREVIEW)
+    // =========================================================================
+    function openDocModal(index) {
+      if (!state.currentAlbum || !Array.isArray(state.currentAlbum.documents)) return;
+      const doc = state.currentAlbum.documents[index];
+      if (!doc) return;
+
+      const modal = document.getElementById("doc-modal");
+      const frame = document.getElementById("doc-modal-frame");
+      const spinner = document.getElementById("doc-modal-spinner");
+      const style = getDocStyle(doc.kind);
+
+      document.getElementById("doc-modal-icon").className = style.icon + " text-amber-300 shrink-0";
+      document.getElementById("doc-modal-title").textContent = doc.title || doc.name;
+      document.getElementById("doc-modal-download").href = doc.downloadUrl || doc.viewUrl;
+      document.getElementById("doc-modal-open").href = doc.viewUrl || doc.previewUrl;
+
+      spinner.classList.remove("hidden");
+      frame.onload = function () {
+        spinner.classList.add("hidden");
+      };
+      frame.src = doc.previewUrl || doc.viewUrl;
+
+      modal.classList.remove("hidden");
+      document.body.classList.add("overflow-hidden");
+    }
+
+    function closeDocModal() {
+      const modal = document.getElementById("doc-modal");
+      if (!modal || modal.classList.contains("hidden")) return;
+      modal.classList.add("hidden");
+      document.getElementById("doc-modal-frame").src = "about:blank";
+      document.body.classList.remove("overflow-hidden");
     }
 
     // =========================================================================
@@ -822,7 +1057,7 @@
         });
         renderAlbum(data.album);
         if (opts.forceRefresh) {
-          showToast("Đã làm mới ảnh trong Mục " + data.album.key + ".", "success");
+          showToast("Đã làm mới dữ liệu Mục " + data.album.key + ".", "success");
         }
       } catch (err) {
         renderErrorState(err.message);
@@ -832,6 +1067,7 @@
 
     function navigateToMuc(muc) {
       closeLightbox();
+      closeDocModal();
       updateBrowserUrl(muc);
       loadRoute(muc);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -852,8 +1088,16 @@
         navigateToMuc(btn.getAttribute("data-nav-muc") || "");
       });
 
-      // Delegation cho nội dung chính (mở mục, mở ảnh, làm mới, thử lại)
-      document.getElementById("main-content").addEventListener("click", async function (e) {
+      // Delegation cho nội dung chính (mở mục, mở ảnh, mở tài liệu, làm mới, thử lại)
+      const mainContent = document.getElementById("main-content");
+      mainContent.addEventListener("click", async function (e) {
+        const docBtn = e.target.closest("[data-doc-index]");
+        if (docBtn) {
+          const idx = Number(docBtn.getAttribute("data-doc-index"));
+          if (!Number.isNaN(idx)) openDocModal(idx);
+          return;
+        }
+
         const photoBtn = e.target.closest("[data-photo-index]");
         if (photoBtn) {
           const idx = Number(photoBtn.getAttribute("data-photo-index"));
@@ -940,16 +1184,57 @@
         { passive: true }
       );
 
-      // Bàn phím trong Lightbox & nút Back trình duyệt
+      // Lọc nhanh tài liệu không dấu trong #main-content
+      mainContent.addEventListener("input", function (e) {
+        if (!e.target || e.target.id !== "doc-search-input") return;
+        const query = removeVietnameseTones(e.target.value);
+        const cards = mainContent.querySelectorAll("[data-doc-card]");
+        let visibleCount = 0;
+        cards.forEach(function (card) {
+          const haystack = card.getAttribute("data-search") || "";
+          const matched = !query || haystack.indexOf(query) !== -1;
+          card.classList.toggle("hidden", !matched);
+          if (matched) visibleCount++;
+        });
+        const emptyEl = document.getElementById("doc-empty-search");
+        if (emptyEl) {
+          emptyEl.classList.toggle("hidden", visibleCount > 0);
+        }
+      });
+
+      // Delegation cho Modal xem tài liệu
+      const docModal = document.getElementById("doc-modal");
+      docModal.addEventListener("click", function (e) {
+        const actionEl = e.target.closest("[data-doc-action]");
+        if (actionEl && actionEl.getAttribute("data-doc-action") === "close") {
+          closeDocModal();
+          return;
+        }
+        if (e.target.id === "doc-modal-stage") {
+          closeDocModal();
+        }
+      });
+
+      // Bàn phím trong Lightbox / Modal tài liệu & nút Back trình duyệt
       document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          if (!docModal.classList.contains("hidden")) {
+            closeDocModal();
+            return;
+          }
+          if (state.lightboxIndex >= 0) {
+            closeLightbox();
+          }
+          return;
+        }
         if (state.lightboxIndex < 0) return;
-        if (e.key === "Escape") closeLightbox();
-        else if (e.key === "ArrowLeft") stepLightbox(-1);
+        if (e.key === "ArrowLeft") stepLightbox(-1);
         else if (e.key === "ArrowRight") stepLightbox(1);
       });
 
       window.addEventListener("popstate", function () {
         closeLightbox();
+        closeDocModal();
         loadRoute(getMucFromUrl());
       });
     }
